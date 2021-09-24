@@ -1,7 +1,7 @@
 <template>
   <el-container class="home-container">
     <!-- 侧边栏 -->
-    <el-aside :width="isCollapse == false ? '200px' : '74px'">
+    <el-aside :width="isCollapse == false ? '200px' : '74px'" class="side-menu">
       <div class="logo">{{ isCollapse ? "元家" : "元家军小程序后台" }}</div>
       <!-- 侧边栏菜单 -->
       <el-menu
@@ -41,7 +41,7 @@
         </div>
         <el-dropdown trigger="click">
           <span class="el-dropdown-link">
-            你好,Admin<i class="el-icon-arrow-down el-icon--right"></i>
+            你好,{{account}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item icon="el-icon-plus" @click.native="logout"
@@ -71,6 +71,7 @@ import Cookies from 'js-cookie';
 export default {
   data() {
     return {
+      account:Cookies.get('account'),
       menulist: [
         { url: "/index", name: "首页", icon: "el-icon-menu" },
         {
@@ -78,8 +79,10 @@ export default {
           name: "阵地战",
           icon: "el-icon-s-operation",
           children: [
-            { url: "/position/detail", name: "阵地明细" },
-            { url: "/position/index", name: "任务列表" },
+            { url: "/position/manage/11", name: "阵地管理" },
+            { url: "/position/task/list/11", name: "任务列表" },
+            { url: "/position/task/review/11", name: "任务审核" },
+            { url: "/position/develop", name: "意见建议" },
           ],
         },
         {
@@ -87,14 +90,21 @@ export default {
           name: "攻坚战",
           icon: "el-icon-s-flag",
           children: [
-            { url: "/assault/detail", name: "阵地明细" },
-            { url: "/assault/index", name: "任务列表" },
+            { url: "/assault/manage/12", name: "阵地管理" },
+            { url: "/assault/task/list/12", name: "任务列表" },
+            { url: "/assault/task/review/12", name: "任务审核" },
           ],
         },
         {
-         url: "/exercise/task/list",
+         url: "/exercise",
           name: "运动战",
           icon: "el-icon-location",
+          children: [
+            { url: "/exercise/manage/13", name: "阵地管理" },
+            { url: "/exercise/attention/detail", name: "关注明细" },
+            { url: "/exercise/task/list/13", name: "任务列表" },
+            { url: "/exercise/task/review/13", name: "任务审核" },
+          ],
         },
         
         {
@@ -102,12 +112,8 @@ export default {
           name: "功能管理",
           icon: "el-icon-s-tools",
           children: [
-            { url: "/function/task/review", name: "任务审核" },
-            { url: "/function/apply/list", name: "报名名单" },
             { url: "/function/outside/rewards", name: "外部奖励" },
             { url: "/function/export/manage", name: "导出管理" },
-            { url: "/function/carnet/detail", name: "闯关明细" },
-            { url: "/function/develop", name: "意见建议" },
           ],
         },
         {
@@ -159,6 +165,7 @@ export default {
       }).then(() => {
          // 清除缓存
           Cookies.remove('token');
+          Cookies.remove('account');
           this.$router.push("/login");
       }).catch(() => {
           this.$message({
@@ -252,5 +259,10 @@ export default {
 }
 .el-icon-arrow-down {
   font-size: 12px;
+}
+.side-menu::-webkit-scrollbar,
+.side-menu-wrapper::-webkit-scrollbar,
+.ivu-menu-vertical::-webkit-scrollbar {
+  display: none !important;
 }
 </style>

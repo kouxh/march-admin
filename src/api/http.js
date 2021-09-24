@@ -19,7 +19,7 @@ console.log(config.baseUrl.dev, '测试')
 console.log(config.baseUrl.pro, '正式')
 // 添加请求拦截器
 axios.interceptors.request.use((config) => {
-  console.log(config, '---33--')
+  // console.log(config, '---33--')
   // 在发送请求之前做些什么
   // 判断是否存在token，如果存在的话，则每个http header都加上token
   // const token = Cookies.get('token')
@@ -33,14 +33,14 @@ axios.interceptors.request.use((config) => {
 });
 // 添加响应拦截器
 axios.interceptors.response.use((response) => {
-  console.log(response, '---444--')
+  // console.log(response, '---444--')
   // 对响应数据做点什么
-  if (response.data.errCode == 40002) {
+  if (response.data.errCode == 41000) {
     router.replace({
       name: 'login',
     });
     Cookies.remove("token");
-    this.$message.error('当前登录状态已过期，请重新登录！');
+    // this.$message.error('当前登录状态已过期，请重新登录！');
   }
   return response;
 }, (error) => {

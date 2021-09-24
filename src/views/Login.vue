@@ -169,6 +169,9 @@ export default {
                 Cookies.set("token", res.data.Token, {
                   expires: Config.cookieExpires,
                 });
+                Cookies.set("account", res.data.account, {
+                  expires: Config.cookieExpires,
+                });
                 this.$message.success("登录成功");
                 this.$router.push("/home");
               } else {

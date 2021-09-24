@@ -28,14 +28,8 @@ const routes = [
       {
         path: '/index',
         name: 'index',
-        meta: { title: '首页' },
+        meta: { title: '首页',affix: true },
         component: () => import('../views/Home/index/index.vue')
-      },
-      {
-        path: '/exercise/task/list',
-        name: 'exercise-task-list',
-        meta: { title: '运动战' },
-        component: () => import('../views/Home/exercise/task-list.vue'),
       },
     ]
   },
@@ -46,31 +40,46 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: '/position/detail',
-        name: 'position-detail',
+        path: '/position/manage/:type',
+        name: 'position-manage',
         meta: {
           hidden: true,
-          title: '阵地明细'
+          title: '阵地管理'
         },
-        component: () => import('../views/Home/position/detail.vue'),
+        props:true,
+        component: () => import('../views/Home/position/manage.vue'),
       },
       {
-        path: '/position/index',
-        name: 'position-index',
+        path: '/position/task/list/:type',
+        name: 'position-task-list',
         meta: {
           hidden: true,
           title: '任务列表'
         },
-        component: () => import('../views/Home/position/index.vue'),
+        props:true,
+        component: () => import('../views/Home/position/task-list.vue'),
       },
       {
-        path: '/position/add',
-        name: 'position-add',
+        path: '/position/task/add/:type',
+        name: 'position-task-add',
         meta: {
           hidden: true,
-          title: '新增阵地'
+          title: '新增阵地任务'
         },
-        component: () => import('../views/Home/position/add.vue'),
+        component: () => import('../views/Home/position/task-add.vue'),
+      },
+      {
+        path: '/position/task/review/:type',
+        name: 'position-task-review',
+        meta: { title: '任务审核' },
+        props:true,
+        component: () => import('../views/Home/function/task-review.vue'),
+      },
+      {
+        path: '/position/develop',
+        name: 'position-develop',
+        meta: { title: '意见建议' },
+        component: () => import('../views/Home/function/develop.vue'),
       },
     ]
 
@@ -82,54 +91,105 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: '/assault/detail',
-        name: 'assault-detail',
+        path: '/assault/manage/:type',
+        name: 'assault-manage',
         meta: {
           hidden: true,
-          title: '阵地明细'
+          title: '阵地管理'
         },
-        component: () => import('../views/Home/assault/detail.vue'),
+        props:true,
+        component: () => import('../views/Home/position/manage.vue'),
+        // component: () => import('../views/Home/assault/manage.vue'),
       },
       {
-        path: '/assault/index',
-        name: 'assault-index',
+        path: '/assault/task/list/:type',
+        name: 'assault-task-list',
         meta: {
           hidden: true,
           title: '任务列表'
         },
-        component: () => import('../views/Home/assault/index.vue'),
+        props:true,
+        component: () => import('../views/Home/position/task-list.vue'),
+        // component: () => import('../views/Home/assault/task-list.vue'),
       },
       {
-        path: '/assault/add',
-        name: 'assault-add',
+        path: '/assault/task/add/:type',
+        name: 'assault-task-add',
         meta: {
           hidden: true,
-          title: '新增任务'
+          title: '新增阵地任务'
         },
-        component: () => import('../views/Home/assault/add.vue'),
+        component: () => import('../views/Home/position/task-add.vue'),
+        // component: () => import('../views/Home/assault/add.vue'),
       },
-      
+      {
+        path: '/assault/task/review/:type',
+        name: 'assault-task-review',
+        meta: { title: '任务审核' },
+        props:true,
+        component: () => import('../views/Home/function/task-review.vue'),
+      },
     ]
   },
-  
+  {
+    path: '/exercise',
+    name: 'exercise',
+    meta: { title: '运动战' },
+    component: Layout,
+    children: [
+      {
+        path: '/exercise/manage/:type',
+        name: 'exercise-manage',
+        meta: {
+          hidden: true,
+          title: '阵地管理'
+        },
+        props:true,
+        component: () => import('../views/Home/position/manage.vue'),
+        // component: () => import('../views/Home/exercise/manage.vue'),
+      },
+      {
+        path: '/exercise/task/list/:type',
+        name: 'exercise-task-list',
+        meta: {
+          hidden: true,
+          title: '任务列表'
+        },
+        props:true,
+        component: () => import('../views/Home/position/task-list.vue'),
+        // component: () => import('../views/Home/exercise/task-list.vue'),
+      },
+      {
+        path: '/exercise/task/add/:type',
+        name: 'exercise-task-add',
+        meta: {
+          hidden: true,
+          title: '新增阵地任务'
+        },
+        // component: () => import('../views/Home/exercise/add.vue'),
+        component: () => import('../views/Home/position/task-add.vue'),
+      },
+      {
+        path: '/exercise/task/review/:type',
+        name: 'exercise-task-review',
+        meta: { title: '任务审核' },
+        props:true,
+        component: () => import('../views/Home/function/task-review.vue'),
+      },
+      {
+        path: '/exercise/attention/detail',
+        name: 'exercise-attention-detail',
+        meta: { title: '关注明细' },
+        component: () => import('../views/Home/function/carnet-detail.vue'),
+      },
+    ]
+  },
   {
     path: '/function',
     name: 'function',
     meta: { title: '功能管理' },
     component: Layout,
     children: [
-      {
-        path: '/function/task/review',
-        name: 'function-task-review',
-        meta: { title: '任务审核' },
-        component: () => import('../views/Home/function/task-review.vue'),
-      },
-      {
-        path: '/function/apply/list',
-        name: 'function-apply-list',
-        meta: { title: '报名名单' },
-        component: () => import('../views/Home/function/apply-list.vue'),
-      },
       {
         path: '/function/outside/rewards',
         name: 'function-outside-rewards',
@@ -141,18 +201,6 @@ const routes = [
         name: 'function-export-manage',
         meta: { title: '导出管理' },
         component: () => import('../views/Home/function/export-manage.vue'),
-      },
-      {
-        path: '/function/carnet/detail',
-        name: 'function-carnet-detail',
-        meta: { title: '闯关明细' },
-        component: () => import('../views/Home/function/carnet-detail.vue'),
-      },
-      {
-        path: '/function/develop',
-        name: 'function-develop',
-        meta: { title: '意见建议' },
-        component: () => import('../views/Home/function/develop.vue'),
       },
     ]
   },
@@ -177,15 +225,16 @@ const routes = [
     ]
   },
   {
-    path: '*', //登录页
+    path: '*', //错误页
     name: 'error',
     meta: { title: '404页'},
     component: () => import('../views/error.vue')
   },
 ]
 const router = new VueRouter({
+  //  mode: 'history',
+  scrollBehavior: () => ({ y: 0 }),
   routes,
-  // mode: 'history',
 })
 router.beforeEach((to, from, next) => {
   NProgress.start()

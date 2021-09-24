@@ -5,20 +5,37 @@
         :model="ruleForm"
         :rules="rules"
         ref="ruleForm"
-        label-width="180px"
+        label-width="140px"
         size="small"
+        label-position="left"
       >
         <el-form-item label="任务ID:" prop="taskId">
           <el-input
             placeholder="请输入任务ID"
             v-model="ruleForm.taskId"
             class="groupon-one"
+            maxlength="4"
           >
-            <template slot="prepend">{{ ptype }}</template>
+            <template slot="prepend">{{ prefix }}</template>
           </el-input>
         </el-form-item>
+        <el-form-item label="所属阵地:" prop="position">
+          <el-select
+            v-model="ruleForm.position"
+            placeholder="请选择"
+            class="groupon-one"
+            @change="optionsChange"
+          >
+            <el-option
+              v-for="item in pOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item
-          v-if="ptype == '0101'"
           label="内容标题:"
           prop="taskName"
           :rules="[
@@ -32,43 +49,22 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-else
-          label="任务名称:"
-          prop="taskName"
-          :rules="[
-            { required: true, message: '请输入任务名称', trigger: 'blur' },
-          ]"
-        >
-          <el-input
-            v-model="ruleForm.taskName"
-            placeholder="请输入任务名称"
-            class="groupon-one"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="所在平台:" prop="platform" v-if="ptype == '0101'">
-          <el-input
-            v-model="ruleForm.platform"
-            placeholder="请输入所在平台"
-            class="groupon-one"
-          ></el-input>
-          <span class="groupon-seven"
-            >（如微信服务号：元年 头条：元年科技）</span
-          >
-        </el-form-item>
-        <el-form-item
-          v-if="ptype == '0101'"
           label="是否抖音:"
-          prop="isDraw"
+          prop="isTrill"
           :rules="[
-            { required: true, message: '请选择是否抖音', trigger: 'change' },
+            {
+              required: true,
+              message: '请选择是否抖音',
+              trigger: 'change',
+            },
           ]"
         >
-          <el-radio-group v-model="ruleForm.isThrill">
+          <el-radio-group v-model="ruleForm.isTrill">
             <el-radio label="是">是</el-radio>
             <el-radio label="否">否</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="参与方式:" prop="joinWay" v-if="ptype !== '0105'">
+        <el-form-item label="参与方式:" prop="joinWay">
           <el-input
             v-model="ruleForm.joinWay"
             placeholder="请输入参与方式"
@@ -81,46 +77,6 @@
             placeholder="请输入负责人"
             class="groupon-one"
           ></el-input>
-        </el-form-item>
-        <el-form-item
-          v-if="ptype == '0103'"
-          label="结尾是否有抽奖:"
-          prop="isDraw"
-          :rules="[
-            { required: true, message: '请选择是否有抽奖', trigger: 'change' },
-          ]"
-        >
-          <el-radio-group v-model="ruleForm.isDraw">
-            <el-radio label="是">是</el-radio>
-            <el-radio label="否">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item
-          v-if="ptype == '0103'"
-          label="二维码上传:"
-          prop="code"
-          :rules="[
-            { required: true, message: '请上传二维码', trigger: 'change' },
-          ]"
-        >
-          <el-upload
-            class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :limit="1"
-            accept=".jpeg,.jpg,.gif,.png"
-            :on-success="handleAvatarSuccess"
-            :on-preview="handlePreviewImg"
-            :on-remove="handleRemoveImg"
-          >
-            <img v-if="ruleForm.code" :src="ruleForm.code" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-          <p class="el-upload__tip" style="color: #909399">
-            建议750*420，且不超过500kb，支持JPG、PNG、JPEG格式
-          </p>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="ruleForm.code" alt="" />
-          </el-dialog>
         </el-form-item>
         <el-form-item
           label="成功奖励（多选）:"
@@ -170,6 +126,22 @@
             </el-checkbox>
           </div>
         </el-form-item>
+        <el-form-item
+          label="是否需要审核:"
+          prop="isCheck"
+          :rules="[
+            {
+              required: true,
+              message: '请选择是否需要审核',
+              trigger: 'change',
+            },
+          ]"
+        >
+          <el-radio-group v-model="ruleForm.isCheck">
+            <el-radio label="是">是</el-radio>
+            <el-radio label="否">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="创建时间:" required>
           <el-row style="display: flex">
             <el-form-item prop="date1">
@@ -197,7 +169,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')"
-            >立即创建</el-button
+            >提交</el-button
           >
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
@@ -235,26 +207,51 @@ export default {
       chance: false, //抽奖机会
       chanceNum: "", //抽奖机会数量
       awardsArr: [{ type: "积分" }, { type: "水滴" }, { type: "抽奖机会" }], //成功奖项
-      ptype: "0", //阵地类型
+      prefix: 1301, //运动战任务ID前缀1101
       ruleForm: {
         taskId: "",
+        position: "",
         taskName: "",
-        platform: "",
-        isThrill:'否',
+        isTrill: "否",
         joinWay: "",
-        principal: "",
-        isDraw: "",
-        code: "",
         award: [],
+        isCheck: "是",
         date1: "",
         date2: "",
       },
+      pOptions: [
+        {
+          value: "1301",
+          label: "头条",
+        },
+        {
+          value: "1302",
+          label: "抖音",
+        },
+        {
+          value: "1303",
+          label: "知乎",
+        },
+        {
+          value: "1304",
+          label: "喜马拉雅",
+        },
+        {
+          value: "1305",
+          label: "视频号",
+        },
+        {
+          value: "1306",
+          label: "微信",
+        },
+      ],
       rules: {
         taskId: [
           { required: true, message: "任务ID不能为空", trigger: "blur" },
+          { min: 4, message: "至少输入4个字符", trigger: "blur" },
         ],
-        platform: [
-          { required: true, message: "请输入所在平台", trigger: "blur" },
+        position: [
+          { required: true, message: "请选择所属阵地", trigger: "change" },
         ],
         joinWay: [
           { required: true, message: "请输入参与方式", trigger: "blur" },
@@ -298,28 +295,15 @@ export default {
   },
 
   created() {
-   
+      this.ruleForm.position = this.pOptions[0].label;
     if (this.$route.params.row) {
-      let pname = this.$route.params.row.address;
-      if (pname == "阵地一") {
-        this.ptype = "0101";
-      } else if (pname == "阵地二") {
-        this.ptype = "0102";
-      } else if (pname == "阵地三") {
-        this.ptype = "0103";
-      } else if (pname == "阵地四") {
-        this.ptype = "0104";
-      } else if (pname == "阵地五") {
-        this.ptype = "0105";
-      }
-    } else if(this.$route.params.pid){
-      this.ptype = this.$route.params.pid;
-    }else {
-      this.$message.info("请选择创建活动所属阵地");
-      this.$router.push({
-        name: "position-index",
-      });
+      let taskId = this.$route.params.row.taskid;
+      this.prefix = taskId.substring(0,4);//获取字符串前4位
+    } else if (this.$route.params.type) {
+      console.log(this.$route.params.type)
+      this.prefix = this.$route.params.type+'01';
     }
+    //默认创建时间
     this.ruleForm.date1 = new Date();
   },
   watch: {
@@ -415,13 +399,21 @@ export default {
     checkboxFn(val) {
       console.log(val, "-----");
     },
+    //选择所属阵地
+    optionsChange(val) {
+      console.log(val, "-----00");
+      this.prefix = val;
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
 .main-box {
+  .el-card {
+    padding-left: 50px;
+  }
   .groupon-one {
-    width: 300px;
+    width: 280px;
   }
   .groupon-seven {
     color: #999;

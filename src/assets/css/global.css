@@ -111,7 +111,8 @@ div:focus {
   background: #00a0e9;
   color: #fff;
 }
-.el-table--mini td, .el-table--mini th {
+.el-table--mini td,
+.el-table--mini th {
   padding: 6px 0;
 }
 
@@ -205,7 +206,7 @@ div:focus {
   color: #fff;
 }
 
-.el-icon-close:before {
+.el-dialog__header .el-dialog__close:before {
   color: #fff;
 }
 .el-dialog__header .el-dialog__headerbtn {
@@ -213,4 +214,69 @@ div:focus {
   right: 14px !important;
   font-size: 20px !important;
 }
+/* 单行溢出 */
+.oneline {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
+/* 多行溢出 */
+.twoline {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.fifiveline {
+  display: -webkit-box !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+.csc-tables-box {
+  height: calc(100% - 196px);
+  overflow-y: auto;
+  border: 1px solid #eee;
+}
+.el-table {
+  margin-top: 0px !important;
+}
+
+/**
+ * @description: 对滚动条样式进行改动
+ * @author: wu.cx 
+ * @date: 2021-01-26 16:00:48
+ */
+
+ ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  width: 6px;
+  background: rgba(#101F1C, 0.1);
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(144,147,153,0.3);
+  background-clip: padding-box;
+  min-height: 28px;
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em;
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  background-color: rgba(#101F1C, 1);
+}

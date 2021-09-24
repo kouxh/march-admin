@@ -14,7 +14,7 @@
           >已选中{{ multipleSelection.length }}条</span
         >
       </div>
-      <div class="header-right">
+      <!-- <div class="header-right">
         <el-select
           v-model="selectValue"
           size="small"
@@ -41,7 +41,7 @@
         <el-button type="success" icon="el-icon-search" size="mini"
           >搜索</el-button
         >
-      </div>
+      </div> -->
     </div>
     <div class="content-box">
       <el-table
@@ -103,66 +103,72 @@ export default {
           label: "内容",
         },
       ],
-      selectValue: "",
-      inputValue: "", //input的框内容
-      tableData: [
-        {
-          name: "张三",
-          tell: "1582482314",
-          content: "内容",
-          submitTime: "2021-2-18",
-        },
-        {
-          name: "张三1",
-          tell: "1582482314",
-          content: "内容",
-          submitTime: "2021-2-18",
-        },
-      ],
+      // selectValue: "",
+      // inputValue: "", //input的框内容
+      tableData: [],
       columns: [
         {
           label: "姓名",
-          key: "name",
+          key: "u_name",
         },
         {
           label: "手机号",
-          key: "tell",
+          key: "u_mobile",
         },
         {
           label: "内容",
-          key: "content",
+          key: "fd_content",
         },
         {
           label: "提交时间",
-          key: "submitTime",
+          key: "created_at",
         },
       ],
-      listLoading: false, //是否加载
+      listLoading: true, //是否加载
       multipleSelection: [], //选中的数组
     };
   },
   created() {
-    this.selectValue = this.options[0].value;
+    // this.selectValue = this.options[0].value;
+    this.getList();
   },
   methods: {
     //多选操作
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      
     },
-    getList() {},
-    //点击导出
-    outExe() {
-      this.$confirm("此操作将导出excel文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.export2Excel();
+    //请求接口数据列表
+    getList() {
+      let that = this;
+      that.$api
+        .feedback({
+           page: that.page,
+          limit: that.limit,
         })
-        .catch(() => {});
+        .then((res) => {
+          if (res.bool) {
+            that.tableData = res.data.data;
+            that.total = res.data.total;
+            that.listLoading = false;
+          } else {
+            that.$message.error(res.data.msg);
+          }
+        });
     },
-    export2Excel() {
+    //点击导出
+    // outExe() {
+    //   this.$confirm("此操作将导出excel文件, 是否继续?", "提示", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "warning",
+    //   })
+    //     .then(() => {
+    //       this.export2Excel();
+    //     })
+    //     .catch(() => {});
+    // },
+    outExe() {
       const { columns, multipleSelection } = this;
       require.ensure([], () => {
         const { export_json_to_excel } = require("@/libs/Export2Excel.js"); //  ---require 括号里面是相对路径其实是引用  Export2Excel.js
@@ -181,9 +187,9 @@ export default {
       });
     },
     // 搜索
-    change(val) {
-      console.log(val, "val-------");
-    },
+    // change(val) {
+    //   console.log(val, "val-------");
+    // },
   },
 };
 </script>

@@ -5,7 +5,7 @@
         type="primary"
         icon="el-icon-plus"
         size="mini"
-       @click="addPosition"
+        @click="addPosition"
         >新增</el-button
       >
     </div>
@@ -17,18 +17,22 @@
         fit
         highlight-current-row
         v-loading="listLoading"
-        
       >
-        <el-table-column prop="pid" label="阵地ID" align="center"> </el-table-column>
-        <el-table-column prop="pname" label="阵地名称" align="center"> </el-table-column>
-        <el-table-column prop="join" label="参与人数" align="center"> </el-table-column>
-        <el-table-column prop="success" label="成功人数" align="center"> </el-table-column>
-        <el-table-column prop="startTime" label="创建时间" align="center"> </el-table-column>
+        <el-table-column prop="pid" label="阵地ID" align="center">
+        </el-table-column>
+        <el-table-column prop="pname" label="阵地名称" align="center">
+        </el-table-column>
+        <el-table-column prop="join" label="参与人数" align="center">
+        </el-table-column>
+        <el-table-column prop="success" label="成功人数" align="center">
+        </el-table-column>
+        <el-table-column prop="startTime" label="创建时间" align="center">
+        </el-table-column>
         <el-table-column label="操作" align="center" width="200px">
           <template slot-scope="scope">
             <el-button
               type="success"
-             @click="onEdit(scope.$index, scope.row)"
+              @click="onEdit(scope.$index, scope.row)"
               icon="el-icon-edit"
               size="mini"
             ></el-button>
@@ -36,7 +40,7 @@
               type="danger"
               icon="el-icon-delete"
               size="mini"
-               @click="onDelete(scope.$index, scope.row)"
+              @click="onDelete(scope.$index, scope.row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -62,6 +66,7 @@
         size="mini"
         :rules="rules"
         ref="form"
+        label-position="left"
       >
         <el-form-item label="阵地ID" prop="pid">
           <el-input
@@ -70,7 +75,7 @@
             style="width: 240px"
             readonly
           >
-            <template slot="prepend">{{prefix}}</template>
+            <template slot="prepend">{{ prefix }}</template>
           </el-input>
         </el-form-item>
         <el-form-item label="阵地名称" prop="pname">
@@ -91,7 +96,7 @@
   </div>
 </template>
 <script>
-import Pagination from "@/components/Pagination/index.vue";
+import Pagination from "../../../components/Pagination/index.vue";
 export default {
   components: { Pagination },
   data() {
@@ -101,22 +106,36 @@ export default {
       limit: 10, //每页条数
       tableData: [
         {
-          pid: "0201",
-          pname: "阵地一",
+          pid: "1301",
+          pname: "头条",
           join: "200",
           success: "100",
           startTime: "2021-2-18",
         },
         {
-          pid: "0202",
-          pname: "阵地二",
+          pid: "1302",
+          pname: "抖音",
           join: "200",
           success: "100",
           startTime: "2021-2-18",
         },
         {
-          pid: "0203",
-          pname: "阵地三",
+          pid: "1303",
+          pname: "知乎",
+          join: "200",
+          success: "100",
+          startTime: "2021-2-18",
+        },
+        {
+          pid: "1304",
+          pname: "喜马拉雅",
+          join: "200",
+          success: "100",
+          startTime: "2021-2-18",
+        },
+        {
+          pid: "1305",
+          pname: "微信视频号",
           join: "200",
           success: "100",
           startTime: "2021-2-18",
@@ -124,37 +143,38 @@ export default {
       ],
       listLoading: false, //是否加载
       dialogVisible: false, //是否展示弹框
-      prefix:12,//攻坚战ID前缀
+      prefix: 1301, //阵地ID前缀
       form: {
         pid: "",
         pname: "",
       },
       rules: {
         pid: [
-          { required: true, message: "阵地ID不能为空", trigger: "blur" },
+          { required: true, message: "任务ID不能为空", trigger: "blur" },
+          // { type: "number", message: "任务ID必须为数字值", trigger: "blur" },
         ],
         pname: [{ required: true, message: "阵地名称", trigger: "blur" }],
       },
     };
   },
   created() {
+    this.total = this.tableData.length;
     //请求接口数据列表
     this.getList();
   },
   methods: {
-
     //点击新增阵地
     addPosition() {
-      this.form.pname='';
+      this.form.pname = "";
       this.dialogVisible = true;
       let nextPosition = this.tableData.length + 1;
       this.form.pid = this.tableData.length == 0 ? "01" : "0" + nextPosition;
     },
     // 点击编辑
     onEdit(index, row) {
-      this.dialogVisible=true;
-      this.form.pid=row.pid.substring(2);
-      this.form.pname=row.pname;
+      this.dialogVisible = true;
+      this.form.pid = row.pid.substring(2);
+      this.form.pname = row.pname;
     },
     //点击删除
     onDelete(index, row) {
@@ -177,7 +197,6 @@ export default {
           });
         });
     },
-   
     //请求接口数据列表
     getList() {
       let that=this;
@@ -193,14 +212,8 @@ export default {
     confirmForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$api.positionAdd({
-            battle_id:parseInt(that.prefix),
-            position_number:parseInt(this.form.pid),
-            position_name:this.form.pname
-          }).then(res=>{
-            console.log(res,'0000000000')
-          })
-          this.dialogVisible=false;
+          this.form.pid = "03" + this.form.pid;
+          this.dialogVisible = false;
         } else {
           return false;
         }
@@ -208,9 +221,9 @@ export default {
     },
     // 点击取消
     resetForm(formName) {
-        this.$refs[formName].resetFields();
-        this.dialogVisible=false;
-      }
+      this.$refs[formName].resetFields();
+      this.dialogVisible = false;
+    },
   },
 };
 </script>
@@ -226,5 +239,4 @@ export default {
 ::v-deep .el-dialog__body {
   padding: 30px 20px 0px 20px;
 }
-
 </style>

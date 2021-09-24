@@ -2,6 +2,9 @@
   <div class="main-box">
     <div class="header-content">
       <div class="header-left">
+        <span v-if="multipleSelection.length > 0"
+          >已选中{{ multipleSelection.length }}条</span
+        >
         <el-button
           type="warning"
           icon="el-icon-download"
@@ -10,8 +13,19 @@
           @click="outExe"
           >导出</el-button
         >
-        <span v-if="multipleSelection.length > 0"
-          >已选中{{ multipleSelection.length }}条</span
+        <el-button
+          type="primary"
+          icon="el-icon-zoom-in"
+          size="mini"
+          @click="(isPass = true), checkedFn('审核中')"
+          >审核中</el-button
+        >
+        <el-button
+          type="danger"
+          icon="el-icon-circle-close"
+          size="mini"
+          @click="(isPass = true), checkedFn('审核失败')"
+          >审核失败</el-button
         >
       </div>
       <div class="header-right">
@@ -36,8 +50,19 @@
           size="small"
           style="width: 200px; margin: 0px 10px"
         ></el-input>
-        <el-button type="success" icon="el-icon-search" size="mini"
+        <el-button
+          type="success"
+          icon="el-icon-search"
+          size="mini"
+          @click="(isPass = false), onSearch()"
           >搜索</el-button
+        >
+        <el-button
+          type="warning"
+          icon="el-icon-refresh"
+          size="mini"
+          @click="onRefresh"
+          >重置</el-button
         >
       </div>
     </div>
@@ -52,23 +77,20 @@
       >
         <el-table-column type="selection" width="50" align="center">
         </el-table-column>
-        <el-table-column label="序号" type="index" align="center">
-        </el-table-column>
-        <el-table-column label="阵地名称" align="center" prop="pname">
-        </el-table-column>
-        <el-table-column label="用户ID" align="center" prop="userId">
-        </el-table-column>
-        <el-table-column label="姓名" align="center" prop="name">
-        </el-table-column>
-        <el-table-column label="手机号" align="center" prop="tell">
-        </el-table-column>
-        <el-table-column label="账号昵称" align="center" prop="nickname">
-        </el-table-column>
-        <el-table-column label="状态" align="center" prop="status">
-        </el-table-column>
-        <el-table-column label="创建时间" align="center" prop="startTime">
-        </el-table-column>
-        <el-table-column label="修改时间" align="center" prop="changeTime">
+        <!-- <el-table-column label="序号" type="index" align="center">
+        </el-table-column> -->
+        <el-table-column
+          v-for="(item, index) in columns"
+          :key="index"
+          :property="item.key"
+          :label="item.value"
+          align="center"
+          :width="item.width"
+        >
+          <!-- 渲染对应表格里面的内容 -->
+          <template slot-scope="scope">
+            <span>{{ scope.row[scope.column.property] }}</span>
+          </template>
         </el-table-column>
       </el-table>
       <pagination
@@ -83,7 +105,7 @@
 </template>
 <script>
 import Pagination from "@/components/Pagination/index.vue";
-import { formatJson } from "@/libs/tools";
+import { formatJson, getDate } from "@/libs/tools";
 export default {
   components: { Pagination },
   data() {
@@ -94,62 +116,44 @@ export default {
       options: [
         {
           value: "1",
-          label: "用户ID",
+          label: "阵地名称",
         },
         {
           value: "2",
-          label: "卡关名称",
-        },
-        {
-          value: "3",
-          label: "姓名",
-        },
-        {
-          value: "4",
           label: "手机号",
         },
-        {
-          value: "5",
-          label: "账号昵称",
-        },
-        {
-          value: "6",
-          label: "状态",
-        },
       ],
-      selectValue: "",
+      tableData: [],
+      selectValue: "", //input选择框
       inputValue: "", //input的框内容
-      tableData: [
-        {
-          pname: "阵地一",
-          userId: "01",
-          name: "张三",
-          tell: "1582482314",
-          nickname: "张三三",
-          status: "无状态",
-          startTime: "2021-2-18",
-          changeTime: "2021-2-28",
-        },
-      ],
+      allData: [], //总数据
+      isFiltrate: false, //是否筛选
+      isPass: false, //是否通过筛选
+      state: "", //状态
+      listLoading: false, //是否加载
       columns: [
         {
-          key: "pname", //导出数据的表头字段，对应导出的表格数据的键名
+          key: "number", //导出数据的表头字段，对应导出的表格数据的键名
+          value: "序号", //Excel表中对应的表头描述
+        },
+        {
+          key: "mmp_name", //导出数据的表头字段，对应导出的表格数据的键名
           value: "阵地名称", //Excel表中对应的表头描述
         },
         {
-          key: "userId",
+          key: "mmpf_id",
           value: "用户ID",
         },
         {
-          key: "name",
+          key: "u_name",
           value: "姓名",
         },
         {
-          key: "tell",
+          key: "u_mobile",
           value: "手机号",
         },
         {
-          key: "nickname",
+          key: "mmpf_nick_name",
           value: "账号昵称",
         },
         {
@@ -157,34 +161,90 @@ export default {
           value: "状态",
         },
         {
-          key: "startTime",
+          key: "created_at",
           value: "创建时间",
         },
         {
-          key: "changeTime",
+          key: "up_at",
           value: "修改时间",
         },
       ],
-      listLoading: false, //是否加载
       multipleSelection: [], //选中的数组
     };
   },
-   created() {
-    this.selectValue=this.options[0].value;
+  created() {
+    this.selectValue = this.options[0].value;
+    console.log(this.selectValue);
+    this.getList(); //请求接口数据列表
   },
   methods: {
     //多选操作
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleOrderPreview(index, row) {
-      console.log(index, row);
+    //请求接口数据列表
+    getList() {
+      let that = this;
+      that.listLoading = true;
+      if (!that.isFiltrate && !that.isPass) {
+        let params = {
+          page: that.page,
+          limit: that.limit,
+        };
+        that.$api.followList(params).then((res) => {
+          if (res.bool) {
+            res.data.data.forEach((item, index) => {
+              item.number = index + 1;
+            });
+            that.tableData = res.data.data;
+            that.allData = res.data.data;
+            that.total = res.data.total;
+            that.listLoading = false;
+          } else {
+            that.$message.error(res.data.msg);
+          }
+        });
+      } else if (that.isFiltrate && !that.isPass) {
+        that.onSearch();
+      } else {
+        that.checkedFn(this.state);
+      }
     },
-    getList() {},
+    //审核按钮操作state0未审 1通过 2 不通过
+    checkedFn(state) {
+      console.log(state, "state");
+      this.listLoading = true;
+      this.state = state;
+      console.log(state, "0000");
+      // 发请求拿到数据并暂存全部数据 this.allData
+      this.isPass = true;
+      let newArr = this.allData.filter((item) => item.status == state);
+      if (newArr.length == 0) {
+        this.tableData = [];
+        this.listLoading = false;
+        return this.$message.info("没有匹配到数据！");
+      } else {
+        // this.tableData = newArr;
+        //过滤分页
+        this.tableData = newArr.filter(
+          (item, index) =>
+            index < this.page * this.limit &&
+            index >= this.limit * (this.page - 1)
+        );
+        console.log(this.tableData, "this.tableData");
+        //分页的总数据
+        this.total = newArr.length;
+        this.listLoading = false;
+      }
+    },
     //点击导出
     outExe() {
       //导出数据为Excel
       const { columns, multipleSelection } = this;
+      // columns.unshift({
+      //   key: "number",
+      //   value: "序号",
+      // })
       require.ensure([], () => {
         const { export_json_to_excel } = require("@/libs/Export2Excel.js"); //  ---require 括号里面是相对路径其实是引用  Export2Excel.js
         const tHeader = []; //  ----tHeader 数组里面放的是字段的对应名
@@ -196,8 +256,55 @@ export default {
           });
         const list = multipleSelection; //                  ----对应的json数组
         const data = formatJson(filterVal, list);
-        export_json_to_excel(tHeader, data, "闯关明细");
+        const excelName =
+          "闯关明细" + getDate(new Date().getTime() / 1000, "date") + ".xlsx"; //文件名称
+        export_json_to_excel(tHeader, data, excelName);
       });
+    },
+    //点击搜索
+    onSearch() {
+      let that = this;
+      that.isFiltrate = false;
+      let params = {
+        page: that.page,
+        limit: that.limit,
+      };
+      if (that.selectValue == 1) {
+        if (that.inputValue != "") {
+          params.position = that.inputValue;
+        } else {
+          return that.$message.info("请输入搜索词");
+        }
+      } else {
+        if (that.inputValue != "") {
+          params.mobile = that.inputValue;
+        } else {
+          return that.$message.info("请输入搜索词");
+        }
+      }
+      that.listLoading = true;
+      that.$api.followList(params).then((res) => {
+        if (res.bool) {
+          res.data.data.forEach((item, index) => {
+            item.number = index + 1;
+          });
+          that.tableData = res.data.data;
+          that.allData = res.data.data;
+          that.total = res.data.total;
+          that.listLoading = false;
+          that.isFiltrate = true;
+        } else {
+          that.isFiltrate = false;
+          that.$message.error(res.data.msg);
+        }
+      });
+    },
+    //点击重置
+    onRefresh() {
+      this.inputValue = "";
+      this.isFiltrate = false;
+      this.isPass = false;
+      this.getList();
     },
   },
 };
@@ -214,7 +321,7 @@ export default {
       span {
         color: #444;
         font-size: 12px;
-        margin-left: 10px;
+        margin-right: 10px;
       }
     }
   }

@@ -1,13 +1,11 @@
 <template>
   <div class="main-box">
     <div class="header-content">
-      <el-button
-        type="primary"
-        icon="el-icon-plus"
-        size="mini"
-        @click="dialogVisible = true"
-        >新增</el-button
-      >
+      <router-link :to="{ name: 'assault-add'}">
+        <el-button type="primary" icon="el-icon-plus" size="mini"
+          >新增</el-button
+        >
+      </router-link>
       <div>
         <el-select v-model="selectValue" size="small" placeholder="请选择">
           <el-option
@@ -106,9 +104,7 @@
         </el-table-column>
         <el-table-column label="审核" align="center">
           <template slot-scope="scope">
-            <el-button
-              @click="onEnter(scope.$index, scope.row)"
-              size="mini"
+            <el-button @click="onEnter(scope.$index, scope.row)" size="mini"
               >进入</el-button
             >
           </template>
@@ -122,24 +118,6 @@
         @pagination="getList"
       />
     </div>
-    <!-- 点击新增按钮弹框 -->
-    <el-dialog
-      title="新建阵地战哪个阵地任务？"
-      :close-on-click-modal="false"
-      :visible.sync="dialogVisible"
-      width="320px"
-    >
-      <div class="dialog-content">
-        <el-button
-          size="mini"
-          class="each-btn"
-          v-for="(item, index) in positionData"
-          :key="index"
-          @click="btnFn(item.pid)"
-          >{{ item.pname }}</el-button
-        >
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
@@ -169,7 +147,7 @@ export default {
       inputValue: "", //input的框内容
       tableData: [
         {
-          taskid: "02010001",
+          taskid: "12010001",
           address: "阵地一",
           title: "申请案例包装",
           principal: "刘瑶",
@@ -182,7 +160,7 @@ export default {
           isShow: true,
         },
         {
-          taskid: "02020001",
+          taskid: "12020001",
           address: "阵地二",
           title: "高级创意客户偏好",
           principal: "邓家驹",
@@ -195,7 +173,7 @@ export default {
           isShow: true,
         },
         {
-          taskid: "02030001",
+          taskid: "12030001",
           address: "阵地三",
           title: "保卫元年大行动",
           principal: "张玉静",
@@ -209,16 +187,10 @@ export default {
         },
       ],
       listLoading: false, //是否加载
-      dialogVisible: false, //是否展示新增弹框
-      positionData: [
-        { pid: "0201", pname: "阵地一" },
-        { pid: "0202", pname: "阵地二" },
-        { pid: "0203", pname: "阵地三" },
-      ],
     };
   },
   methods: {
-     // 点击编辑
+    // 点击编辑
     onEdit(index, row) {
       console.log(index, row);
       this.$router.push({
@@ -250,41 +222,21 @@ export default {
         });
     },
     getList() {},
-    //点击每一个阵地按钮
-    btnFn(pid) {
-      console.log(pid)
-        this.$router.push({
-          name: "assault-add",
-          params: {
-            pid: pid,
-          },
-        });
-      this.dialogVisible = false;
-    },
     //点击进入
-    onEnter(index, row){
-      console.log(index,row)
-      if(row.address=='阵地三'){
-        this.$router.push({
-        name: "function-apply-list",
+    onEnter(index, row) {
+      console.log(index, row);
+      this.$router.push({
+        path: "/assault/task/review/12",
         params: {
           row: row,
         },
       });
-      }else{
-        this.$router.push({
-        name: "function-task-review",
-        params: {
-          row: row,
-        },
-        });
-      }
     },
     //点击选择项
-    onSelect(val){
-      console.log(val,'val')
-      console.log(this.selectValue)
-    }
+    onSelect(val) {
+      console.log(val, "val");
+      console.log(this.selectValue);
+    },
   },
 };
 </script>

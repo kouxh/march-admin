@@ -1,5 +1,6 @@
 <template>
   <div class="main-box">
+    
     <div class="content-box">
       <el-table
         :data="tableData"
@@ -10,9 +11,11 @@
       >
         <el-table-column label="序号" type="index" align="center" width="60">
         </el-table-column>
-        <el-table-column label="日期" sortable align="center" prop="date" width="120">
+        <el-table-column label="日期" align="center" prop="created_at" width="140">
         </el-table-column>
-        <el-table-column label="操作" align="center" prop="operation">
+        <el-table-column label="用户" align="center" prop="mmdu_account" width="180">
+        </el-table-column>
+        <el-table-column label="操作" align="center" prop="mmal_content">
         </el-table-column>
       </el-table>
       <pagination
@@ -34,33 +37,32 @@ export default {
       total: 1,
       page: 1,
       limit: 10,
-  
-      selectValue: "",
-      inputValue: "", //input的框内容
-      tableData: [
-        {
-          date: "2021-9-1",
-          operation: "内容1",
-        },
-        {
-          date: "2021-9-2",
-          operation: "内容2",
-        },
-      ],
-      listLoading: false, //是否加载
-    
+      tableData: [],
+      listLoading: true, //是否加载
     };
   },
   created() {
-      this.total=this.tableData.length
+    this.getList();//请求接口数据列表
   },
   methods: {
- 
-    handleOrderPreview(index, row) {
-      console.log(index, row);
+    //请求接口数据列表
+    getList() {
+      let that = this;
+      that.$api
+        .operation({
+          page: that.page,
+          limit: that.limit,
+        })
+        .then((res) => {
+          if (res.bool) {
+            that.tableData = res.data.data;
+            that.total = res.data.total;
+            that.listLoading = false;
+          } else {
+            that.$message.error(res.data.msg);
+          }
+        });
     },
-    getList() {},
-    // 搜索
     
   },
 };

@@ -5,32 +5,38 @@
         :model="ruleForm"
         :rules="rules"
         ref="ruleForm"
-        label-width="180px"
+        label-width="140px"
         size="small"
+        label-position="left"
       >
         <el-form-item label="任务ID:" prop="taskId">
           <el-input
             placeholder="请输入任务ID"
             v-model="ruleForm.taskId"
             class="groupon-one"
+            maxlength="4"
           >
-            <template slot="prepend">{{ ptype }}</template>
+            <template slot="prepend">{{ prefix }}</template>
           </el-input>
+          
         </el-form-item>
-        <el-form-item
-          v-if="ptype == '0203'"
-          label="活动名称:"
-          prop="taskName"
-          :rules="[{ required: true, message: '请输入标题', trigger: 'blur' }]"
-        >
-          <el-input
-            v-model="ruleForm.taskName"
-            placeholder="请输入标题"
+        <el-form-item label="所属阵地:" prop="position">
+          <el-select
+            v-model="ruleForm.position"
+            placeholder="请选择"
             class="groupon-one"
-          ></el-input>
+            @change="optionsChange"
+          >
+            <el-option
+              v-for="item in pOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item
-          v-else
           label="任务名称:"
           prop="taskName"
           :rules="[
@@ -43,17 +49,10 @@
             class="groupon-one"
           ></el-input>
         </el-form-item>
-        <el-form-item label="参与方式:" prop="joinWay" v-if="ptype == '0202'">
+        <el-form-item label="参与方式:" prop="joinWay">
           <el-input
             v-model="ruleForm.joinWay"
             placeholder="请输入参与方式"
-            class="groupon-one"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="活动内容:" prop="content" v-if="ptype == '0203'">
-          <el-input
-            v-model="ruleForm.content"
-            placeholder="请输入活动内容"
             class="groupon-one"
           ></el-input>
         </el-form-item>
@@ -65,12 +64,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="ptype == '0202'"
           label="结尾是否有抽奖:"
-          prop="isDraw"
-          :rules="[
-            { required: true, message: '请选择是否有抽奖', trigger: 'change' },
-          ]"
         >
           <el-radio-group v-model="ruleForm.isDraw">
             <el-radio label="是">是</el-radio>
@@ -78,12 +72,8 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item
-          v-if="ptype == '0202'"
           label="二维码上传:"
           prop="code"
-          :rules="[
-            { required: true, message: '请上传二维码', trigger: 'change' },
-          ]"
         >
           <el-upload
             class="avatar-uploader"
@@ -152,6 +142,22 @@
             </el-checkbox>
           </div>
         </el-form-item>
+        <el-form-item
+          label="是否需要审核:"
+          prop="isCheck"
+          :rules="[
+            {
+              required: true,
+              message: '请选择是否需要审核',
+              trigger: 'change',
+            },
+          ]"
+        >
+          <el-radio-group v-model="ruleForm.isCheck">
+            <el-radio label="是">是</el-radio>
+            <el-radio label="否">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="创建时间:" required>
           <el-row style="display: flex">
             <el-form-item prop="date1">
@@ -179,7 +185,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')"
-            >立即创建</el-button
+            >提交</el-button
           >
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
@@ -222,33 +228,44 @@ export default {
         { type: "水滴", num: "3" },
         { type: "抽奖机会", num: "3" },
       ], //成功奖项
-      ptype: "0", //阵地类型
+      prefix: 1201, //攻坚战任务ID前缀1101
       ruleForm: {
         taskId: "",
+        position:'',
         taskName: "",
-        platform: "",
         joinWay: "",
-        content: "",
         principal: "",
         isDraw: "",
         code: "",
         award: [],
         date1: "",
         date2: "",
+        isCheck:'是'
       },
+      pOptions: [
+        {
+          value: "1201",
+          label: "阵地一",
+        },
+        {
+          value: "1202",
+          label: "阵地二",
+        },
+        {
+          value: "1203",
+          label: "阵地三",
+        }
+      ],
       rules: {
         taskId: [
           { required: true, message: "任务ID不能为空", trigger: "blur" },
           { min: 4, message: '至少输入4个字符', trigger: 'blur' }
         ],
-        platform: [
-          { required: true, message: "请输入所在平台", trigger: "blur" },
+        position: [
+          { required: true, message: "请选择所属阵地", trigger: "change" },
         ],
         joinWay: [
           { required: true, message: "请输入参与方式", trigger: "blur" },
-        ],
-        content: [
-          { required: true, message: "请输入活动内容", trigger: "blur" },
         ],
         principal: [
           { required: true, message: "请输入负责人", trigger: "blur" },
@@ -289,22 +306,14 @@ export default {
   },
 
   created() {
-    if (this.$route.params.row) {
-      let pname = this.$route.params.row.address;
-      if (pname == "阵地一") {
-        this.ptype = "0201";
-      } else if (pname == "阵地二") {
-        this.ptype = "0202";
-      } else if (pname == "阵地三") {
-        this.ptype = "0203";
-      }
-    } else if (this.$route.params.pid) {
-      this.ptype = this.$route.params.pid;
-    } else {
-      this.$message.info("请选择创建活动所属阵地");
-      this.$router.push({
-        name: "assault-index",
-      });
+    this.ruleForm.position = this.pOptions[0].label;
+    //点击编辑
+     if (this.$route.params.row) {
+      let taskId = this.$route.params.row.taskid;
+      this.prefix = taskId.substring(0,4);//获取字符串前4位
+    } else if (this.$route.params.type) {
+      console.log(this.$route.params.type)
+      this.prefix = this.$route.params.type+'01';
     }
     this.ruleForm.date1 = new Date();
   },
@@ -405,13 +414,21 @@ export default {
     checkboxFn(val) {
       console.log(val, "-----");
     },
+    //选择所属阵地
+    optionsChange(val) {
+      console.log(val, "-----00");
+      this.prefix = val;
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
 .main-box {
+  .el-card {
+    padding-left: 50px;
+  }
   .groupon-one {
-    width: 300px;
+    width: 280px;
   }
   .groupon-seven {
     color: #999;

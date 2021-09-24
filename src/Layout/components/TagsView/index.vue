@@ -78,7 +78,6 @@ export default {
       return route.path === this.$route.path;
     },
     isAffix(tag) {
-      
       return tag.meta && tag.meta.affix;
     },
     filterAffixTags(routes, basePath = "/") {
@@ -280,6 +279,7 @@ export default {
     }
   }
 }
+
 </style>
 
 <style lang="scss">
@@ -305,5 +305,8 @@ export default {
       }
     }
   }
+}
+.tags-view-wrapper::-webkit-scrollbar{
+  display: none !important;
 }
 </style>

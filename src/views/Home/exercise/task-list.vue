@@ -1,13 +1,40 @@
 <template>
   <div class="main-box">
     <div class="header-content">
+       <router-link :to="{ name: 'exercise-add'}">
       <el-button
         type="primary"
         icon="el-icon-plus"
         size="mini"
-        @click="addPosition"
         >新增</el-button
       >
+       </router-link>
+      <div>
+        <el-select
+          v-model="selectValue"
+          size="small"
+          clearable
+          placeholder="请选择"
+          @change="onSelect"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+        <el-input
+          v-model="inputValue"
+          placeholder="请输入内容"
+          size="small"
+          style="width: 200px; margin: 0px 10px"
+        ></el-input>
+        <el-button type="success" icon="el-icon-search" size="mini"
+          >搜索</el-button
+        >
+      </div>
     </div>
     <div class="content-box">
       <el-table
@@ -18,15 +45,50 @@
         highlight-current-row
         v-loading="listLoading"
       >
-        <el-table-column prop="pid" label="阵地ID" align="center">
+        <el-table-column label="任务ID" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.taskid }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="pname" label="阵地名称" align="center">
+        <el-table-column label="所属阵地" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.address }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="join" label="参与人数" align="center">
+        <el-table-column label="标题" align="center" width="150">
+          <template slot-scope="scope">
+            <span class="oneline">{{ scope.row.title }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="success" label="成功人数" align="center">
+        <el-table-column label="所在平台" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.platform }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="startTime" label="创建时间" align="center">
+        <el-table-column label="负责人" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.principal }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="参与人数" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.join }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="成功人数" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.success }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.startTime }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="失效时间" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.endTime }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="200px">
           <template slot-scope="scope">
@@ -42,6 +104,24 @@
               size="mini"
               @click="onDelete(scope.$index, scope.row)"
             ></el-button>
+            <el-button type="info" size="mini" style="padding: 4px 12px 6px">
+              <i class="iconfont icon-xianshi" v-show="scope.row.isShow"></i>
+              <i class="iconfont icon-buxianshi" v-show="!scope.row.isShow"></i>
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="未审核量" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.unchecked }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="审核" align="center">
+          <template slot-scope="scope">
+            <!-- <router-link :to="{name:'position-add',params:{ orderState: 1}}"> -->
+            <el-button @click="onEnter(scope.$index, scope.row)" size="mini"
+              >进入</el-button
+            >
+            <!-- </router-link> -->
           </template>
         </el-table-column>
       </el-table>
@@ -53,53 +133,7 @@
         @pagination="getList"
       />
     </div>
-    <!-- 点击新增按钮弹框 -->
-    <el-dialog
-      title="新增阵地"
-      :close-on-click-modal="false"
-      :visible.sync="dialogVisible"
-      width="360px"
-    >
-      <el-form
-        :model="form"
-        label-width="80px"
-        size="mini"
-        :rules="rules"
-        ref="form"
-        label-position="left"
-      >
-        <el-form-item label="阵地ID" prop="pid">
-          <el-input
-            placeholder="请输入内容"
-            v-model="form.pid"
-            style="width: 240px"
-            readonly
-          >
-            <template slot="prepend">{{ prefix }}</template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="阵地名称" prop="pname">
-          <el-input
-            v-model="form.pname"
-            placeholder="请输入内容"
-            style="width: 240px"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="积分" prop="integral">
-          <el-input
-            v-model="form.integral"
-            placeholder="请输入内容"
-            style="width: 240px"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="resetForm('form')">取 消</el-button>
-        <el-button type="primary" size="mini" @click="confirmForm('form')"
-          >确 定</el-button
-        >
-      </div>
-    </el-dialog>
+ 
   </div>
 </template>
 <script>
@@ -108,85 +142,104 @@ export default {
   components: { Pagination },
   data() {
     return {
-      total: 1, //总条数
-      page: 1, //当前页
-      limit: 10, //每页条数
-      tableData: [
+      total: 1,
+      page: 1,
+      limit: 10,
+      options: [
         {
-          pid: "0301",
-          pname: "头条",
-          join: "200",
-          success: "100",
-          startTime: "2021-2-18",
+          value: "1",
+          label: "任务ID",
         },
         {
-          pid: "0302",
-          pname: "抖音",
-          join: "200",
-          success: "100",
-          startTime: "2021-2-18",
+          value: "2",
+          label: "负责人",
         },
         {
-          pid: "0303",
-          pname: "知乎",
-          join: "200",
-          success: "100",
-          startTime: "2021-2-18",
-        },
-        {
-          pid: "0304",
-          pname: "喜马拉雅",
-          join: "200",
-          success: "100",
-          startTime: "2021-2-18",
-        },
-        {
-          pid: "0305",
-          pname: "微信视频号",
-          join: "200",
-          success: "100",
-          startTime: "2021-2-18",
+          value: "3",
+          label: "标题",
         },
       ],
+      selectValue: "",
+      inputValue: "", //input的框内容
+      tableData: [
+        {
+          taskid: "13010001",
+          address: "阵地一",
+          title: "财务共享+，九大问题",
+          platform: "微信服务号：元年",
+          principal: "张文文",
+          join: "200",
+          success: "100",
+          startTime: "2021-2-18",
+          endTime: "2021-2-28",
+          unchecked: "2",
+          ischecked: false,
+          isShow: true,
+        },
+        {
+          taskid: "13020001",
+          address: "阵地二",
+          title: "一起来找茬",
+          platform: "---",
+          principal: "刘福莉",
+          join: "200",
+          success: "100",
+          startTime: "2021-2-18",
+          endTime: "2021-2-28",
+          unchecked: "2",
+          ischecked: false,
+          isShow: true,
+        },
+        {
+          taskid: "13030001",
+          address: "阵地三",
+          title: "十大信息技术评选调研",
+          platform: "---",
+          principal: "张文文",
+          join: "200",
+          success: "100",
+          startTime: "2021-2-18",
+          endTime: "2021-2-28",
+          unchecked: "2",
+          ischecked: false,
+          isShow: true,
+        },
+        {
+          taskid: "13040001",
+          address: "阵地四",
+          title: "元年日历图",
+          platform: "---",
+          principal: "周子英",
+          join: "200",
+          success: "100",
+          startTime: "2021-2-18",
+          endTime: "2021-2-28",
+          unchecked: "2",
+          ischecked: false,
+          isShow: true,
+        }
+      ],
       listLoading: false, //是否加载
-      dialogVisible: false, //是否展示弹框
-      prefix: 13, //阵地ID前缀
-      form: {
-        pid: "",
-        pname: "",
-        integral: '',
-      },
-      rules: {
-        pid: [
-          { required: true, message: "任务ID不能为空", trigger: "blur" },
-          // { type: "number", message: "任务ID必须为数字值", trigger: "blur" },
-        ],
-        pname: [{ required: true, message: "阵地名称", trigger: "blur" }],
-        integral: [
-          { required: true, message: "积分不能为空",trigger: "blur" },
-          // { type: "number", message: "积分必须为数字值",trigger: "blur" },
-        ],
-      },
+    
     };
   },
   created() {
-    this.total = this.tableData.length;
-    //请求接口数据列表
-    this.getList();
+    this.selectValue = this.options[0].label;
   },
   methods: {
-    //点击新增阵地
-    addPosition() {
-      this.form.pname = "";
-      this.dialogVisible = true;
-      let nextPosition = this.tableData.length + 1;
-      this.form.pid = this.tableData.length == 0 ? "01" : "0" + nextPosition;
-    },
     // 点击编辑
     onEdit(index, row) {
-      this.dialogVisible = true;
-      this.form.pid = row.pid.substring(2);
-      this.form.pname = row.pname;
+      console.log(index, row);
+      // this.$router.push({
+      //   name: "position-add",
+      //   query: { row: row },
+      // });
+      this.$router.push({
+        name: "position-add",
+        params: {
+          row: row,
+        },
+      });
     },
     //点击删除
     onDelete(index, row) {
@@ -209,32 +262,21 @@ export default {
           });
         });
     },
-    //请求接口数据列表
-    getList() {
-      let that=this;
-      that.$api.positionList({
-        battle_id:parseInt(that.prefix),
-        page:that.page,
-        limit:that.limit
-      }).then(res=> {
-        console.log(res,'-----')
-      })
+    getList() {},
+    //点击进入
+    onEnter(index, row) {
+      console.log(index, row);
+        this.$router.push({
+          path: "/exercise/task/review/13",
+          params: {
+            row: row,
+          },
+        });
     },
-    //点击提交按钮
-    confirmForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.form.pid = "03" + this.form.pid;
-          this.dialogVisible = false;
-        } else {
-          return false;
-        }
-      });
-    },
-    // 点击取消
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.dialogVisible = false;
+    //点击选择项
+    onSelect(val) {
+      console.log(val, "val");
+      console.log(this.selectValue);
     },
   },
 };
@@ -247,8 +289,10 @@ export default {
     margin-bottom: 20px;
   }
 }
-// 修改默认
-::v-deep .el-dialog__body {
-  padding: 30px 20px 0px 20px;
+.dialog-content {
+  text-align: center;
+  .each-btn {
+    margin-bottom: 10px;
+  }
 }
 </style>
