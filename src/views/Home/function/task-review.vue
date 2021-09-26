@@ -25,21 +25,21 @@
           type="primary"
           icon="el-icon-zoom-in"
           size="mini"
-          @click="isPass=true,checkedFn(0)"
+          @click="(isPass = true), checkedFn(0)"
           >未审核</el-button
         >
         <el-button
           type="success"
           icon="el-icon-circle-check"
           size="mini"
-          @click="isPass=true,checkedFn(1)"
+          @click="(isPass = true), checkedFn(1)"
           >通过</el-button
         >
         <el-button
           type="danger"
           icon="el-icon-circle-close"
           size="mini"
-          @click="isPass=true,checkedFn(2)"
+          @click="(isPass = true), checkedFn(2)"
           >未通过</el-button
         >
       </div>
@@ -70,7 +70,7 @@
           type="success"
           icon="el-icon-search"
           size="mini"
-          @click="isPass=false,onSearch()"
+          @click="(isPass = false), onSearch()"
           >搜索</el-button
         >
         <el-button
@@ -157,7 +157,12 @@
           >
             <!-- 渲染对应表格里面的内容 -->
             <template slot-scope="scope">
-              <img :src="scope.row[scope.column.property]" class="img-box" />
+              <img
+                :src="scope.row[scope.column.property]"
+                class="img-box"
+                @click="previewPic(scope.row[scope.column.property])"
+              />
+              <!-- <el-image class="img-box" :src="scope.row[scope.column.property]" :preview-src-list="[scope.row[scope.column.property]]"></el-image> -->
             </template>
           </el-table-column>
         </el-table>
@@ -170,6 +175,21 @@
         @pagination="getList"
       />
     </div>
+     <!-- 图片预览 -->
+          <el-dialog
+      :visible.sync="dialogVisible"
+      :modal="false"
+      title="图片预览"
+      width="50%"
+    >
+      <img :src="previewpic" alt="" width="100%" />
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+                
   </div>
 </template>
 <script>
@@ -199,8 +219,8 @@ export default {
       tableData: [], //列表数据
       allData: [], //总数据
       isFiltrate: false, //是否筛选
-      isPass:false,//是否通过筛选
-      state:"",//状态
+      isPass: false, //是否通过筛选
+      state: "", //状态
       listLoading: true, //是否加载
       multipleSelection: [], //选中的数组
       imgcolumns: [
@@ -221,6 +241,8 @@ export default {
           key: "img4",
         },
       ],
+      dialogVisible: false,
+      previewpic: "",
     };
   },
   created() {
@@ -266,7 +288,7 @@ export default {
     getList() {
       let that = this;
       that.listLoading = true;
-      if (!that.isFiltrate&&!that.isPass) {
+      if (!that.isFiltrate && !that.isPass) {
         that.$api
           .examineList({
             battle_id: that.$route.params.type,
@@ -293,9 +315,9 @@ export default {
               that.$message.error(res.data.msg);
             }
           });
-      } else if(that.isFiltrate&&!that.isPass){
+      } else if (that.isFiltrate && !that.isPass) {
         that.onSearch();
-      }else{
+      } else {
         that.checkedFn(that.state);
       }
     },
@@ -354,14 +376,14 @@ export default {
     },
     //审核按钮操作state0未审 1通过 2 不通过
     checkedFn(state) {
-      this.state=state;
-      console.log(state,'0000')
+      this.state = state;
+      console.log(state, "0000");
       // 发请求拿到数据并暂存全部数据 this.allData
-      this.isPass=true;
+      this.isPass = true;
       let newArr = this.allData.filter((item) => item.mmpe_status == state);
       if (newArr.length == 0) {
         this.tableData = [];
-        this.listLoading=false;
+        this.listLoading = false;
         return this.$message.info("没有匹配到数据！");
       } else {
         // this.tableData = newArr;
@@ -371,17 +393,16 @@ export default {
             index < this.page * this.limit &&
             index >= this.limit * (this.page - 1)
         );
-        console.log(this.tableData,'this.tableData')
+        console.log(this.tableData, "this.tableData");
         //分页的总数据
         this.total = newArr.length;
-        this.listLoading=false;
-        
+        this.listLoading = false;
       }
     },
     //点击搜索
     onSearch() {
       let that = this;
-      console.log(that.isPass,'that.isPass')
+      console.log(that.isPass, "that.isPass");
       that.isFiltrate = false;
       let param = {
         battle_id: that.$route.params.type,
@@ -426,8 +447,13 @@ export default {
     onRefresh() {
       this.inputValue = "";
       this.isFiltrate = false;
-      this.isPass=false;
+      this.isPass = false;
       this.getList();
+    },
+    //预览大图
+    previewPic(url) {
+      this.previewpic = url;
+      this.dialogVisible = true;
     },
   },
 };

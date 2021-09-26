@@ -199,7 +199,7 @@ export default {
   font-weight: bold;
   font-family: 楷体;
   font-size: 16px;
-  background: rgba(255, 255, 255, 0.2);
+  /* background: rgba(255, 255, 255, 0.2); */
   margin: 16px;
 }
 .el-header {

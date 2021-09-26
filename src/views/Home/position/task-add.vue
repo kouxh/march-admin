@@ -180,6 +180,7 @@
             type="date"
             placeholder="选择日期"
             v-model="ruleForm.failure"
+            :picker-options="optionEnd"
             value-format="yyyy-MM-dd"
           >
           </el-date-picker>
@@ -276,6 +277,7 @@ export default {
           },
         ],
       },
+      optionEnd: this.processDate(), //结束时间范围
     };
   },
 
@@ -298,6 +300,25 @@ export default {
   },
   watch: {},
   methods: {
+      /**
+     * 开始时间发生变化时触发,设置结束时间不可选择的日期
+     * 结束时间应大于等于开始时间,且小于等于当前时间
+     **/
+    processDate() {
+      const that = this;
+      let nowData=new Date();
+      return {
+        disabledDate(time) {
+          // 如果开始时间不为空，则结束时间大于开始时间
+          if (nowData) {
+            return new Date(nowData).getTime() > time.getTime();
+          } else {
+            // 开始时间不选时，结束时间最大值小于等于当天日期
+            return time.getTime() > Date.now();
+          }
+        },
+      };
+    },
     //阵地列表请求接口数据
     getPositonList() {
       let that = this;

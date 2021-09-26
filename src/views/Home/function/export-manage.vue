@@ -108,6 +108,16 @@ import Pagination from "@/components/Pagination/index.vue";
 export default {
   components: { Pagination },
   data() {
+     const validatelink = (rule, value, callback) => {
+       if (value.trim().length == 0) {
+        return callback(new Error('导出链接不能为空'));
+      } else if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+        callback('导出链接格式不正确');
+      } else {
+        callback();
+      }
+      
+    };
     return {
       total: 1,
       page: 1,
@@ -128,7 +138,7 @@ export default {
         describe: [
           { required: true, message: "导出需求不能为空", trigger: "blur" },
         ],
-        url: [{ required: true, message: "导出链接不能为空", trigger: "blur" }],
+        url: [{ required: true, validator: validatelink, trigger: "blur" }],
       },
       listLoading: true, //是否加载
     };
@@ -139,7 +149,7 @@ export default {
   methods: {
     //导出操作
     handleOrderPreview(row) {
-      window.open(row.mme_route);
+      window.open(row.mme_route.trim());
     },
     //数组列表
     getList() {
