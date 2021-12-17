@@ -12,7 +12,7 @@ import { getToken } from '../libs/utils';
 
 // axios 配置
 axios.defaults.timeout = 500000;
-// axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers['Content-Type'] = 'application/json';
 axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro;
 console.log(axios.defaults.baseURL, 'axios.defaults.baseURLaxios.defaults.baseURL')
 console.log(config.baseUrl.dev, '测试')
@@ -84,7 +84,7 @@ axios.interceptors.response.use((response) => {
 //       return Promise.reject(error.response.status) // 返回接口返回的错误信息
 //     })
 export default {
-  // fetchPost  请求方式
+  // fetchPost  请求方式 创建
   fetchPost: function (url, params, query) {
     let urls = url;
     if (query) {
@@ -105,7 +105,7 @@ export default {
     });
   },
 
-  // GET 请求方式
+  // GET 请求方式 查看
   fetchGet: function (url, params, header) {
     return new Promise((resolve, reject) => {
       axios.get(url, {
@@ -121,6 +121,45 @@ export default {
           reject(error);
         });
     });
-  }
+  },
 
+  // put请求方式 更新
+  fetchPut:function(url, params, query){
+    let urls = url;
+    if (query) {
+      urls = url + '?' + query;
+    } else {
+      urls = url;
+    }
+    return new Promise((resolve, reject) => {
+      axios.put(urls, params,{
+        responseType: header ? header.responseType : 'json'
+      })
+        .then(response => {
+          resolve(response.data);
+        }, err => {
+          reject(err);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  },
+  // delete请求方式 删除 
+  fetchDel:function(url, params, header){
+    return new Promise((resolve, reject) => {
+      axios.delete(url, {
+        params: params,
+        responseType: header ? header.responseType : 'json'
+      })
+        .then(response => {
+          resolve(response.data);
+        }, err => {
+          reject(err);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  },
 };

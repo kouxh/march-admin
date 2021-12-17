@@ -9,7 +9,7 @@
         highlight-current-row
         v-loading="listLoading"
       >
-        <el-table-column label="序号" type="index" align="center" width="60">
+        <el-table-column label="序号" type="index" :index="tableIndex" align="center" width="60">
         </el-table-column>
         <el-table-column label="日期" align="center" prop="created_at" width="140">
         </el-table-column>
@@ -63,6 +63,10 @@ export default {
           }
         });
     },
+    //序号累加
+    tableIndex(index){
+      return (this.page-1)*this.limit+index+1
+    }
     
   },
 };

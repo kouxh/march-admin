@@ -24,13 +24,13 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    // proxy: {// 配置多个代理(配置一个 proxy: 'http://localhost:4000' )
-    //   '/march': {
-    //     target: 'https://war.yuanian.com',
-    //     changeOrigin: true,
-    //     pathRewrite: { '^': '' },
-    //   },
-    // }
+    proxy: {// 配置多个代理(配置一个 proxy: 'http://localhost:4000' )
+      '/march': {
+        target: 'https://war.yuanian.com',
+        changeOrigin: true,
+        pathRewrite: { '^': '' },
+      },
+    }
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test

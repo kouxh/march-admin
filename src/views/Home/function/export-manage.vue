@@ -17,7 +17,7 @@
         highlight-current-row
         v-loading="listLoading"
       >
-        <el-table-column label="序号" type="index" align="center" width="60">
+        <el-table-column label="序号" type="index" :index="tableIndex" align="center" width="60">
         </el-table-column>
         <el-table-column
           label="导出标题"
@@ -200,6 +200,10 @@ export default {
       this.$refs[formName].resetFields();
       this.dialogVisible = false;
     },
+    //序号累加
+    tableIndex(index){
+      return (this.page-1)*this.limit+index+1
+    }
   },
 };
 </script>

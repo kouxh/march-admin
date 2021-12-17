@@ -72,6 +72,7 @@ export default {
   mounted() {
     this.initTags();
     this.addTags();
+    this.beforeUnload();
   },
   methods: {
     isActive(route) {
@@ -208,6 +209,32 @@ export default {
     },
     handleScroll() {
       this.closeMenu();
+    },
+    // 监听页面刷新 路由不丢失
+    beforeUnload() {
+      window.addEventListener("beforeunload", () => {
+        // visitedViews数据结构太复杂无法直接JSON.stringify处理，先转换需要的数据
+        let tabViews = this.visitedViews.map(item => {
+          return {
+            fullPath: item.fullPath,
+            hash: item.hash,
+            meta: { ...item.meta },
+            name: item.name,
+            params: { ...item.params },
+            path: item.path,
+            query: { ...item.query },
+            title: item.title
+          };
+        });
+        sessionStorage.setItem("tabViews", JSON.stringify(tabViews));
+
+      });
+      // 页面初始化加载判断缓存中是否有数据
+      let oldViews = JSON.parse(sessionStorage.getItem("tabViews")) || [];
+      if (oldViews.length > 0) {
+        this.$store.state.tagsView.visitedViews = oldViews;
+        sessionStorage.clear();
+      }
     },
   },
 };

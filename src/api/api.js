@@ -82,7 +82,7 @@ export default {
   * @param  {[type]} params [description]
   * @return {[type]}        [description]
   */
-   taskShow(params) {
+  taskShow(params) {
     return fetch.fetchGet('/march/admin/task.reception', params);
   },
   /**
@@ -138,7 +138,7 @@ export default {
   * @param  {[type]} params [description]
   * @return {[type]}        [description]
   */
-   exportList(params) {
+  exportList(params) {
     return fetch.fetchGet('/march/admin/export.list', params);
   },
   /**
@@ -146,7 +146,7 @@ export default {
   * @param  {[type]} params [description]
   * @return {[type]}        [description]
   */
-   followList(params) {
+  followList(params) {
     return fetch.fetchGet('/march/admin/position.follow', params);
   },
   /**
@@ -154,23 +154,122 @@ export default {
   * @param  {[type]} params [description]
   * @return {[type]}        [description]
   */
-   externalRewards(params) {
-      return fetch.fetchPost('/march/admin/external.rewards', params);
-    },
-   /**
-  * [问题反馈]
-  * @param  {[type]} params [description]
-  * @return {[type]}        [description]
-  */
-    feedback(params) {
-      return fetch.fetchGet('/march/admin/problem.feedback', params);
-    },
+  externalRewards(params) {
+    return fetch.fetchPost('/march/admin/external.rewards', params);
+  },
+
+  /**
+* [新消息通知列表]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  messageList(params) {
+    return fetch.fetchGet('/march/admin/message.list', params);
+  },
+  /**
+* [添加与编辑新消息通知]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  messageAdd(params) {
+    return fetch.fetchPost('/march/admin/message.add.edit', params);
+  },
+  /**
+* [新消息通知删除]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  messageDel(params) {
+    return fetch.fetchGet('/march/admin/message.del', params);
+  },
+  /**
+ * [问题反馈]
+ * @param  {[type]} params [description]
+ * @return {[type]}        [description]
+ */
+  feedback(params) {
+    return fetch.fetchGet('/march/admin/problem.feedback', params);
+  },
   /**
   * [操作日志]
   * @param  {[type]} params [description]
   * @return {[type]}        [description]
   */
-   operation(params) {
-      return fetch.fetchGet('/march/admin/user.operation', params);
-    },
+  operation(params) {
+    return fetch.fetchGet('/march/admin/user.operation', params);
+  },
+  /**
+ * [设置抽奖所需要的积分]
+ * @param  {[type]} params [description]
+ * @return {[type]}        [description]
+ */
+  setIntegral(params) {
+    return fetch.fetchPost('/march/admin/set.prize.set', params);
+  },
+  /**
+* [抽奖奖品列表]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  drawList(params) {
+    return fetch.fetchGet('/march/admin/luck.draw.list', params);
+  },
+  /**
+* [抽奖奖品新增&编辑]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  drawAdd(params) {
+    return fetch.fetchPost('/march/admin/luck.draw.add.edit', params);
+  },
+  /**
+* [抽奖奖品删除]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  drawDel(params) {
+    return fetch.fetchGet('/march/admin/luck.draw.del', params);
+  },
+  /**
+* [中奖记录]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  winRecord(params) {
+    return fetch.fetchGet('/march/admin/luck.winning.record', params);
+  },
+  /**
+* [查看收货地址]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  cheackAddress(params) {
+    return fetch.fetchGet('/march/admin/luck.view.receipt.information', params);
+  },
+  /**
+* [徽章列表]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  badgeList(params) {
+    return fetch.fetchGet('/march/admin/badge.list', params);
+  },
+  /**
+* [徽章增加&编辑]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  badgeAdd(params) {
+    return fetch.fetchPost('/march/admin/badge.add.edit', params);
+  },
+  /**
+* [徽章删除]
+* @param  {[type]} params [description]
+* @return {[type]}        [description]
+*/
+  badgeDel(params) {
+    return fetch.fetchGet('/march/admin/badge.del', params);
+  },
+
+
 }

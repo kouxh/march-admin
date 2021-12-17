@@ -107,11 +107,19 @@
                 size="mini"
                 @click="onDelete(scope.row)"
               ></el-button>
-              <el-button type="info" size="mini" style="padding: 4px 12px 6px"  @click="onShow(scope.row)">
-                <i class="iconfont icon-xianshi" v-show="scope.row.reception_status==1"></i>
+              <el-button
+                type="info"
+                size="mini"
+                style="padding: 4px 12px 6px"
+                @click="onShow(scope.row)"
+              >
+                <i
+                  class="iconfont icon-xianshi"
+                  v-show="scope.row.reception_status == 1"
+                ></i>
                 <i
                   class="iconfont icon-buxianshi"
-                  v-show="scope.row.reception_status==2"
+                  v-show="scope.row.reception_status == 2"
                 ></i>
               </el-button>
             </template>
@@ -234,31 +242,31 @@ export default {
         });
     },
     //点击显示隐藏
-    onShow(row){
-      let status='';
-      if(row.reception_status==1){
-        status=2
-      }else{
-        status=1
+    onShow(row) {
+      let status = "";
+      if (row.reception_status == 1) {
+        status = 2;
+      } else {
+        status = 1;
       }
-        this.$api
-            .taskShow({
-              battle_id: this.positionType,
-              task_id: row.mmt_id,
-              status:status
-            })
-            .then((res) => {
-              if (res.bool) {
-                this.$message({
-                  type: "success",
-                  message: "操作成功!",
-                });
-                //请求接口数据列表
-                this.getList();
-              } else {
-                this.$message.error(res.data.msg);
-              }
+      this.$api
+        .taskShow({
+          battle_id: this.positionType,
+          task_id: row.mmt_id,
+          status: status,
+        })
+        .then((res) => {
+          if (res.bool) {
+            this.$message({
+              type: "success",
+              message: "操作成功!",
             });
+            //请求接口数据列表
+            this.getList();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
     },
     //获取任务列表数据
     getList() {
@@ -307,19 +315,31 @@ export default {
         if (ptype == 1104) {
           this.$router.push({
             name: "position-develop",
+             query: {
+              taskid: row.mmt_id,
+            },
           });
         } else {
           this.$router.push({
             name: "position-task-review",
+            query: {
+              taskid: row.mmt_id,
+            },
           });
         }
       } else if (this.positionType == 12) {
         this.$router.push({
           name: "assault-task-review",
+           query: {
+              taskid: row.mmt_id,
+            },
         });
       } else if (this.positionType == 13) {
         this.$router.push({
           name: "exercise-task-review",
+           query: {
+              taskid: row.mmt_id,
+            },
         });
       }
     },

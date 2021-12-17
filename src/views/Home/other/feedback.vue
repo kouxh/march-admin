@@ -54,7 +54,7 @@
       >
         <el-table-column type="selection" width="50" align="center">
         </el-table-column>
-        <el-table-column label="序号" type="index" align="center">
+        <el-table-column label="序号" type="index" :index="tableIndex" align="center">
         </el-table-column>
         <el-table-column
           v-for="(item, index) in columns"
@@ -186,6 +186,10 @@ export default {
         export_json_to_excel(tHeader, data, fileName);
       });
     },
+    //序号累加
+    tableIndex(index){
+      return (this.page-1)*this.limit+index+1
+    }
     // 搜索
     // change(val) {
     //   console.log(val, "val-------");

@@ -254,7 +254,8 @@ export default {
         that.$api
           .examineList({
             battle_id: 11,
-            positon: 2,
+            type: 2,
+            task_id:that.$route.query.taskid,
             page: that.page,
             limit: that.limit,
           })

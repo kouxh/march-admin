@@ -115,9 +115,15 @@
             <i class="el-icon-plus"></i>
           </el-upload>
           <p class="el-upload__tip" style="color: #909399">
-            建议750*420，且不超过500kb，支持JPG、PNG、JPEG格式
+            建议450*450，且不超过500kb，支持JPG、PNG、JPEG格式
           </p>
-          <el-dialog :visible.sync="dialogVisible" append-to-body>
+          <el-dialog
+            :visible.sync="dialogVisible"
+            title="二维码展示"
+            width="30%"
+            append-to-body
+            :close-on-click-modal="false"
+          >
             <img
               width="100%"
               v-if="ruleForm.code"
@@ -295,18 +301,17 @@ export default {
         this.ruleForm.position = this.pOptions[0].mmp_name;
         this.prefix = this.pOptions[0].mmp_number;
       }, 1000);
-      
     }
   },
   watch: {},
   methods: {
-      /**
+    /**
      * 开始时间发生变化时触发,设置结束时间不可选择的日期
      * 结束时间应大于等于开始时间,且小于等于当前时间
      **/
     processDate() {
       const that = this;
-      let nowData=new Date();
+      let nowData = new Date();
       return {
         disabledDate(time) {
           // 如果开始时间不为空，则结束时间大于开始时间
@@ -593,8 +598,5 @@ export default {
 }
 ::v-deep .disUoloadSty .el-upload--picture-card {
   display: none !important; /* 上传按钮隐藏 */
-}
-::v-deep .el-dialog__header {
-  padding: 20px;
 }
 </style>

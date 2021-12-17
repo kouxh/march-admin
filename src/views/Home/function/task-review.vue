@@ -248,6 +248,7 @@ export default {
   created() {
     this.getList(); //请求接口数据列表
     this.selectValue = this.options[0].value;
+    
   },
   methods: {
     //多选操作
@@ -286,12 +287,15 @@ export default {
     },
     //请求接口数据列表
     getList() {
+      console.log(this.$route.query.taskid,'this.$route.query.taskid')
       let that = this;
       that.listLoading = true;
       if (!that.isFiltrate && !that.isPass) {
+        console.log(that.$route.query.taskid,'that.$route.query.taskid000')
         that.$api
           .examineList({
             battle_id: that.$route.params.type,
+            task_id:that.$route.query.taskid,
             page: that.page,
             limit: that.limit,
           })

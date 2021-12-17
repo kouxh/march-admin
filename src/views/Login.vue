@@ -133,14 +133,16 @@ export default {
     },
     // 登录
     login() {
-      console.log("00000000000000");
       let that = this;
       let { username, password, loginCode, rememberMe } = that.loginForm;
+      // 验证码转成小写 目标不区分大小写
+      const identifyCode=that.identifyCode.toLowerCase();
+      loginCode=loginCode.toLowerCase();
       that.$refs.loginFormRef.validate((valid) => {
         if (valid) {
           this.loading = true;
-          if (loginCode != that.identifyCode) that.refreshCode();
-          if (loginCode != that.identifyCode)
+          if (loginCode != identifyCode) that.refreshCode();
+          if (loginCode != identifyCode)
             return this.$message("验证码不一致,请重新输入");
           //是否记住密码
           if (rememberMe) {

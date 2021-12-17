@@ -106,7 +106,6 @@ export default {
             { url: "/exercise/task/review/13", name: "任务审核" },
           ],
         },
-        
         {
           url: "/function",
           name: "功能管理",
@@ -114,6 +113,25 @@ export default {
           children: [
             { url: "/function/outside/rewards", name: "外部奖励" },
             { url: "/function/export/manage", name: "导出管理" },
+            { url: "/function/message/inform", name: "消息通知" },
+          ],
+        },
+        {
+          url: "/zone",
+          name: "抽奖地带",
+          icon: "el-icon-shopping-bag-2",
+          children: [
+            { url: "/zone/draw/set", name: "抽奖设置" },
+            { url: "/zone/award/set", name: "奖品设置" },
+            { url: "/win/record", name: "中奖记录" },
+          ],
+        },
+        {
+          url: "/my/record",
+          name: "我的战绩",
+          icon: "el-icon-trophy",
+          children: [
+            { url: "/Integral/level", name: "积分等级" },
           ],
         },
         {
@@ -166,6 +184,7 @@ export default {
          // 清除缓存
           Cookies.remove('token');
           Cookies.remove('account');
+          sessionStorage.clear();
           this.$router.push("/login");
       }).catch(() => {
           this.$message({

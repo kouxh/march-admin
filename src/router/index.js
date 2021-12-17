@@ -28,7 +28,7 @@ const routes = [
       {
         path: '/index',
         name: 'index',
-        meta: { title: '首页',affix: true },
+        meta: { title: '首页', affix: true },
         component: () => import('../views/Home/index/index.vue')
       },
     ]
@@ -46,7 +46,7 @@ const routes = [
           hidden: true,
           title: '阵地管理'
         },
-        props:true,
+        props: true,
         component: () => import('../views/Home/position/manage.vue'),
       },
       {
@@ -56,7 +56,7 @@ const routes = [
           hidden: true,
           title: '任务列表'
         },
-        props:true,
+        props: true,
         component: () => import('../views/Home/position/task-list.vue'),
       },
       {
@@ -72,7 +72,7 @@ const routes = [
         path: '/position/task/review/:type',
         name: 'position-task-review',
         meta: { title: '任务审核' },
-        props:true,
+        props: true,
         component: () => import('../views/Home/function/task-review.vue'),
       },
       {
@@ -97,9 +97,8 @@ const routes = [
           hidden: true,
           title: '阵地管理'
         },
-        props:true,
+        props: true,
         component: () => import('../views/Home/position/manage.vue'),
-        // component: () => import('../views/Home/assault/manage.vue'),
       },
       {
         path: '/assault/task/list/:type',
@@ -108,9 +107,8 @@ const routes = [
           hidden: true,
           title: '任务列表'
         },
-        props:true,
+        props: true,
         component: () => import('../views/Home/position/task-list.vue'),
-        // component: () => import('../views/Home/assault/task-list.vue'),
       },
       {
         path: '/assault/task/add/:type',
@@ -120,13 +118,12 @@ const routes = [
           title: '新增阵地任务'
         },
         component: () => import('../views/Home/position/task-add.vue'),
-        // component: () => import('../views/Home/assault/add.vue'),
       },
       {
         path: '/assault/task/review/:type',
         name: 'assault-task-review',
         meta: { title: '任务审核' },
-        props:true,
+        props: true,
         component: () => import('../views/Home/function/task-review.vue'),
       },
     ]
@@ -144,9 +141,8 @@ const routes = [
           hidden: true,
           title: '阵地管理'
         },
-        props:true,
+        props: true,
         component: () => import('../views/Home/position/manage.vue'),
-        // component: () => import('../views/Home/exercise/manage.vue'),
       },
       {
         path: '/exercise/task/list/:type',
@@ -155,9 +151,8 @@ const routes = [
           hidden: true,
           title: '任务列表'
         },
-        props:true,
+        props: true,
         component: () => import('../views/Home/position/task-list.vue'),
-        // component: () => import('../views/Home/exercise/task-list.vue'),
       },
       {
         path: '/exercise/task/add/:type',
@@ -166,14 +161,13 @@ const routes = [
           hidden: true,
           title: '新增阵地任务'
         },
-        // component: () => import('../views/Home/exercise/add.vue'),
         component: () => import('../views/Home/position/task-add.vue'),
       },
       {
         path: '/exercise/task/review/:type',
         name: 'exercise-task-review',
         meta: { title: '任务审核' },
-        props:true,
+        props: true,
         component: () => import('../views/Home/function/task-review.vue'),
       },
       {
@@ -202,6 +196,54 @@ const routes = [
         meta: { title: '导出管理' },
         component: () => import('../views/Home/function/export-manage.vue'),
       },
+      {
+        path: '/function/message/inform',
+        name: 'function-message-inform',
+        meta: { title: '消息通知' },
+        component: () => import('../views/Home/function/message-inform.vue'),
+      },
+    ]
+  },
+  {
+    path: '/zone',
+    name: 'zone',
+    meta: { title: '抽奖地带' },
+    component: Layout,
+    children: [
+      {
+        path: '/zone/draw/set',
+        name: 'zone-draw-set',
+        meta: { title: '抽奖设置' },
+        component: () => import('../views/Home/zone/draw-set.vue'),
+      },
+      {
+        path: '/zone/award/set',
+        name: 'zone-award-set',
+        meta: { title: '奖品设置' },
+        component: () => import('../views/Home/zone/award-set.vue'),
+      },
+      {
+        path: '/win/record',
+        name: 'win-record',
+        meta: { title: '中奖记录' },
+        component: () => import('../views/Home/zone/win-record.vue'),
+      },
+     
+    ]
+  },
+  {
+    path: '/my/record',
+    name: 'my-record',
+    meta: { title: '我的战绩' },
+    component: Layout,
+    children: [
+      {
+        path: '/Integral/level',
+        name: 'Integral-level',
+        meta: { title: '积分等级' },
+        component: () => import('../views/Home/my-record/Integral-Ievel.vue'),
+      },
+
     ]
   },
   {
@@ -227,7 +269,7 @@ const routes = [
   {
     path: '*', //错误页
     name: 'error',
-    meta: { title: '404页'},
+    meta: { title: '404页' },
     component: () => import('../views/error.vue')
   },
 ]
@@ -269,6 +311,6 @@ router.afterEach((to, from) => {
 // })
 
 export default router
-  
 
- 
+
+
